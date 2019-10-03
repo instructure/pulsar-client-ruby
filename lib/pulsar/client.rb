@@ -21,6 +21,7 @@ require 'pulsar/client/version'
 require 'pulsar/bindings'
 require 'pulsar/client_configuration'
 require 'pulsar/consumer'
+require 'pulsar/consumer_configuration'
 require 'pulsar/producer'
 
 module Pulsar

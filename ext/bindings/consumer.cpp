@@ -1,4 +1,5 @@
 #include "rice/Data_Type.hpp"
+#include "rice/Enum.hpp"
 #include "rice/Constructor.hpp"
 #include <pulsar/Client.h>
 #include <ruby/thread.h>
@@ -57,6 +58,12 @@ void bind_consumer(Module &module) {
     // TODO [with future libpulsar version]
     //.define_method("negative_acknowledge", &pulsar_rb::Consumer::negative_acknowledge)
     ;
+
+  define_enum<pulsar::ConsumerType>("ConsumerType", module)
+    .define_value("Exclusive", ConsumerExclusive)
+    .define_value("Shared", ConsumerShared)
+    .define_value("Failover", ConsumerFailover)
+    .define_value("KeyShared", ConsumerKeyShared);
 
   define_class_under<pulsar_rb::ConsumerConfiguration>(module, "ConsumerConfiguration")
     .define_constructor(Constructor<pulsar_rb::ConsumerConfiguration>())

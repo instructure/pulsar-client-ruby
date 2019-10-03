@@ -26,22 +26,22 @@ require 'pulsar/producer'
 module Pulsar
   class ConsumerConfiguration
     # aligns with the pulsar::ConsumerType enum in the C++ library
-    CONSUMER_TYPES = [
-      :exclusive,
-      :shared,
-      :failover,
-      :key_shared
-    ]
+    CONSUMER_TYPES = {
+      :exclusive => Pulsar::ConsumerType::Exclusive,
+      :shared => Pulsar::ConsumerType::Shared,
+      :failover => Pulsar::ConsumerType::Failover,
+      :key_shared => Pulsar::ConsumerType::KeyShared
+    }
 
     module RubySideTweaks
       def consumer_type
         enum_value = super
-        CONSUMER_TYPES[enum_value]
+        CONSUMER_TYPES.invert[enum_value]
       end
 
       def consumer_type=(type)
-        unless type.is_a?(Integer)
-          type = CONSUMER_TYPES.index(type)
+        unless type.is_a?(Pulsar::ConsumerType)
+          type = CONSUMER_TYPES[type]
           unless type
             raise ArgumentError, "unrecognized consumer_type"
           end

@@ -1,0 +1,32 @@
+# describes the client's behavior. the server's behavior will be inferred from
+# the dual of this, and is included as a comment below
+---
+select:
+  get:
+    - send: string
+    - branch:
+        success:
+          - recv: string
+        failure: null
+  put:
+    - send: string
+    - send: string
+    - branch:
+        success: null
+        failure: null
+
+# corresponding server behavior
+# branch:
+#   get:
+#     - recv: string # key
+#     - select:
+#         success:
+#           - send: string # value
+#         failure: null
+#   put:
+#     - recv: string # key
+#     - recv: string # value
+#     - select:
+#         success: null
+#         failure: null
+

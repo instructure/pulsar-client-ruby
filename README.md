@@ -27,7 +27,7 @@ the `.pre` suffix in the Gemfile to install it via Bundler.
 
 ## Usage
 
-Example:
+Setup and basic `consumer.receive` example:
 
 ```ruby
 # have these in your shell with appropriate values
@@ -48,10 +48,35 @@ producer.send("Hello, world!")
 # named "hello-consumer"
 subscription = "hello-consumer"
 consumer = client.subscribe(topic, subscription)
-consumer.listen do |message|
-  puts message
-  break
+
+msg = consumer.receive
+message = msg.data
+puts "got #{message}"
+consumer.acknolwedge(msg)
+```
+
+Convenience method for listening to messages in a loop:
+
+```ruby
+consumer.listen do |message, _, done|
+  # process message here; call done to stop the loop.
+  # messages are auto-acknowledged.
+  puts "got #{message}"
+  done.call()
 end
+```
+
+Convenience method for listening on a separate thread:
+
+```ruby
+listenerThread = consumer.listen_in_thread do |message, _, done|
+  # process message here; call done to stop the loop.
+  # messages are auto-acknowledged.
+  puts "got #{message}"
+  done.call()
+end
+# ...
+listenerThread.join # wait for the thread to finish
 ```
 
 (more documentation coming; see TODO.md)

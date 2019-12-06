@@ -45,7 +45,7 @@ module Pulsar
     end
 
     def listen_in_thread
-      Thread.new { listen }
+      Thread.new { listen {|*args| yield *args }}
     end
   end
 end

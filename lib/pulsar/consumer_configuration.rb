@@ -36,7 +36,7 @@ module Pulsar
     module RubySideTweaks
       def initialize(config={})
         super()
-        self.consumer_type = config.consumer_type if config.has_key?(:consumer_type)
+        self.consumer_type = config[:consumer_type] if config.has_key?(:consumer_type)
       end
 
       def consumer_type

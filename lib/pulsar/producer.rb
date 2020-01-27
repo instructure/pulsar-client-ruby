@@ -22,9 +22,9 @@ require 'pulsar/bindings'
 module Pulsar
   class Producer
     module RubySideTweaks
-      def send(message)
+      def send(message, partitionKey='')
         unless message.is_a?(Pulsar::Message)
-          message = Pulsar::Message.new(message)
+          message = Pulsar::Message.new(message, partitionKey)
         end
         super(message)
       end

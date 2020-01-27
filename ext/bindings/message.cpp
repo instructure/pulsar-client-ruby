@@ -18,6 +18,10 @@ Message::Message(const std::string& data) {
   _msg = mb.build();
 }
 
+Message Message::fromMessage(const pulsar::Message& msg) {
+  return Message(msg);
+}
+
 Rice::String Message::getData() {
   std::string str((const char*)_msg.getData(), _msg.getLength());
   return Rice::String(str);
@@ -39,8 +43,8 @@ void bind_message(Module& module) {
     ;
 
   define_class_under<pulsar_rb::Message>(module, "Message")
-    .define_constructor(Constructor<pulsar_rb::Message, const pulsar::Message&>())
     .define_constructor(Constructor<pulsar_rb::Message, const std::string&>())
+    .define_singleton_method("from_message", &pulsar_rb::Message::fromMessage)
     .define_method("data", &pulsar_rb::Message::getData)
     .define_method("message_id", &pulsar_rb::Message::getMessageId)
     ;

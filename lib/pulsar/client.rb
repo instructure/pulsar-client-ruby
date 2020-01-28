@@ -23,6 +23,7 @@ require 'pulsar/client_configuration'
 require 'pulsar/consumer'
 require 'pulsar/consumer_configuration'
 require 'pulsar/producer'
+require 'pulsar/message'
 
 module Pulsar
   class Client

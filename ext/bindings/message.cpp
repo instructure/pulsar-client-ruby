@@ -13,16 +13,16 @@ Rice::String MessageId::toString() {
 }
 
 Message::Message(const std::string& data, const std::string& partitionKey) {
-  pulsar::MessageBuilder mb;
-  mb.setContent(data);
-  if (!partitionKey.empty()) {
-    mb.setPartitionKey(partitionKey);
-  }
-  _msg = mb.build();
+  buildMessage(data, partitionKey);
 }
 
-Message Message::fromMessage(const pulsar::Message& msg) {
-  return Message(msg);
+// pulsar::Message is immutable and must be rebuilt each time properties change
+void Message::buildMessage(const std::string& data, const std::string& partitionKey) {
+  pulsar::MessageBuilder mb;
+  mb.setContent(data);
+  // setting this to the empty string effectively "clears" the key
+  mb.setPartitionKey(partitionKey);
+  _msg = mb.build();
 }
 
 Rice::String Message::getData() {
@@ -39,6 +39,11 @@ Rice::String Message::getPartitionKey() {
   return Rice::String(_msg.getPartitionKey());
 }
 
+void Message::setPartitionKey(const std::string& partitionKey) {
+  std::string str((const char*)_msg.getData(), _msg.getLength());
+  buildMessage(str, partitionKey);
+}
+
 }
 
 using namespace Rice;
@@ -50,10 +55,10 @@ void bind_message(Module& module) {
     ;
 
   define_class_under<pulsar_rb::Message>(module, "Message")
-    .define_constructor(Constructor<pulsar_rb::Message, const std::string&, const std::string&>())
-    .define_singleton_method("from_message", &pulsar_rb::Message::fromMessage)
+    .define_constructor(Constructor<pulsar_rb::Message, const std::string&, const std::string&>(), (Arg("message"), Arg("partition_key") = ""))
     .define_method("data", &pulsar_rb::Message::getData)
     .define_method("message_id", &pulsar_rb::Message::getMessageId)
     .define_method("partition_key", &pulsar_rb::Message::getPartitionKey)
+    .define_method("partition_key=", &pulsar_rb::Message::setPartitionKey)
     ;
 }

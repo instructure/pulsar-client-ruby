@@ -22,11 +22,13 @@ namespace pulsar_rb {
     pulsar::Message _msg;
     Message(const pulsar::Message& msg) : _msg(msg) {};
     Message(const std::string& data, const std::string& partitionKey);
+    void buildMessage(const std::string& data, const std::string& partitionKey);
 
-    Message fromMessage(const pulsar::Message& msg);
     Rice::String getData();
     Rice::String getPartitionKey();
     MessageId::ptr getMessageId();
+
+    void setPartitionKey(const std::string& partitionKey);
 
     typedef Rice::Data_Object<Message> ptr;
   };

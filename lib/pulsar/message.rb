@@ -20,16 +20,18 @@
 require 'pulsar/bindings'
 
 module Pulsar
-  class Producer
+  class Message
     module RubySideTweaks
-      def send(message)
-        unless message.is_a?(Pulsar::Message)
-          message = Pulsar::Message.new(message)
-        end
-        super(message)
+      def partition_key=(partition_key)
+        # translate ruby's nil to C++ empty string
+        super(partition_key || "")
       end
     end
 
     prepend RubySideTweaks
+
+    def self.from_message(message)
+      new(message.data, message.partition_key)
+    end
   end
 end

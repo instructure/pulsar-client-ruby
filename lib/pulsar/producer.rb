@@ -22,10 +22,13 @@ require 'pulsar/bindings'
 module Pulsar
   class Producer
     module RubySideTweaks
-      def send(message)
+      def send(message, **opts)
         unless message.is_a?(Pulsar::Message)
-          message = Pulsar::Message.new(message)
+          message = Pulsar::Message.new(message, opts)
+        else
+          warn "Ignoring options (#{opts.keys.join(", ")}) since message is already a Pulsar::Message" unless opts.empty?
         end
+
         super(message)
       end
     end

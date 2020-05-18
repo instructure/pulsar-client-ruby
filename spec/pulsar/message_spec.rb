@@ -24,10 +24,58 @@ RSpec.describe Pulsar::Message do
       expect(m.data).to eq("payload")
     end
 
+    describe "properties" do
+      it "takes properties" do
+        m = described_class.new("payload", properties: {"a" => "1", "b" => "2"})
+        expect(m.data).to eq("payload")
+        expect(m.properties).to eq({"a" => "1", "b" => "2"})
+      end
+
+      it "stringifies non-string properties" do
+        m = described_class.new("payload", properties: {
+          "a" => 1,
+          :b => [2],
+        })
+        expect(m.data).to eq("payload")
+        expect(m.properties).to eq({"a" => "1", "b" => "[2]"})
+      end
+
+      it "takes a lot of properties" do
+        m = described_class.new("payload", properties: {
+          "a" => 1,
+          "b" => [2],
+          "c" => ("c" * 100000),
+          "license" => File.read(File.expand_path("../../LICENSE", __dir__)),
+        })
+        expect(m.data).to eq("payload")
+        expect(m.properties["license"]).to match(/Apache License/)
+        expect(m.properties["license"]).to match(/limitations under the License/)
+        expect(m.properties["c"]).to match(/^c{100000}$/)
+        expect(m.properties.values_at("a", "b")).to eq(["1", "[2]"])
+      end
+
+      it "accepts nil properties" do
+        m = described_class.new("payload", properties: nil)
+        expect(m.properties).to eq({})
+      end
+    end
+
     describe "errors" do
       it "rejects second arg that is not a hash" do
         expect do
           described_class.new("payload", [1])
+        end.to raise_exception(TypeError)
+      end
+
+      it "rejects unknown named arguments" do
+        expect do
+          described_class.new("payload", properties: {}, foo: "x")
+        end.to raise_exception(ArgumentError, /Unknown keyword argument: foo/)
+      end
+
+      it "rejects properties that are not a hash" do
+        expect do
+          described_class.new("payload", properties: [])
         end.to raise_exception(TypeError)
       end
     end

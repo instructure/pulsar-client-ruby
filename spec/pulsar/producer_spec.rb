@@ -17,8 +17,26 @@
 # under the License.
 #
 
-RSpec.describe Pulsar::Client do
-  it "has a version number" do
-    expect(Pulsar::Client::VERSION).not_to be nil
+RSpec.describe Pulsar::Producer do
+  describe "side tweaks" do
+    describe "#send" do
+      class ProducerTest
+        def send(message)
+          message
+        end
+        prepend Pulsar::Producer::RubySideTweaks
+      end
+
+      it "passes Message through" do
+        m = Pulsar::Message.new("payload")
+        expect(Pulsar::Message).not_to receive(:new)
+        expect(ProducerTest.new.send(m).data).to eq("payload")
+      end
+
+      it "creates Message from string" do
+        m = ProducerTest.new.send("payload")
+        expect(m.data).to eq("payload")
+      end
+    end
   end
 end

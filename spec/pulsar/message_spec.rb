@@ -17,8 +17,19 @@
 # under the License.
 #
 
-RSpec.describe Pulsar::Client do
-  it "has a version number" do
-    expect(Pulsar::Client::VERSION).not_to be nil
+RSpec.describe Pulsar::Message do
+  describe "::new" do
+    it "takes a string" do
+      m = described_class.new("payload")
+      expect(m.data).to eq("payload")
+    end
+
+    describe "errors" do
+      it "rejects second arg that is not a hash" do
+        expect do
+          described_class.new("payload", [1])
+        end.to raise_exception(TypeError)
+      end
+    end
   end
 end

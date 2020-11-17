@@ -59,7 +59,7 @@ void* consumer_close_worker(void* taskPtr) {
 
 void Consumer::close() {
   consumer_close_task task = { _consumer };
-  rb_thread_call_without_gvl(&consumer_close_task, &task, RUBY_UBF_IO, nullptr);
+  rb_thread_call_without_gvl(&consumer_close_worker, &task, RUBY_UBF_IO, nullptr);
   CheckResult(task.result);
 }
 

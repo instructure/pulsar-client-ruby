@@ -14,6 +14,11 @@ typedef struct {
   pulsar::Result result;
 } producer_send_task;
 
+typedef struct {
+  pulsar::Producer& producer;
+  pulsar::Result result;
+} producer_close_task;
+
 void* producer_send_worker(void* taskPtr) {
   producer_send_task& task = *(producer_send_task*)taskPtr;
   task.result = task.producer.send(task.message);
@@ -23,6 +28,18 @@ void* producer_send_worker(void* taskPtr) {
 void Producer::send(const Message& message) {
   producer_send_task task = { _producer, message._msg };
   rb_thread_call_without_gvl(&producer_send_worker, &task, RUBY_UBF_IO, nullptr);
+  CheckResult(task.result);
+}
+
+void* producer_close_worker(void* taskPtr) {
+  producer_close_task& task = *(producer_close_task*)taskPtr;
+  task.result = task.producer.close();
+  return nullptr;
+}
+
+void Producer::close() {
+  producer_close_task task = { _producer };
+  rb_thread_call_without_gvl(&producer_close_worker, &task, RUBY_UBF_IO, nullptr);
   CheckResult(task.result);
 }
 

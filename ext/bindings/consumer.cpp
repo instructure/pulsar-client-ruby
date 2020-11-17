@@ -16,6 +16,11 @@ typedef struct {
   pulsar::Result result;
 } consumer_receive_job;
 
+typedef struct {
+  pulsar::Consumer& consumer;
+  pulsar::Result result;
+} consumer_close_task;
+
 void* consumer_receive_nogvl(void* jobPtr) {
   consumer_receive_job& job = *(consumer_receive_job*)jobPtr;
   if (job.timeout_ms > 0) {
@@ -44,6 +49,18 @@ void Consumer::acknowledge(const Message& message) {
 
 void Consumer::negative_acknowledge(const Message& message) {
   _consumer.negativeAcknowledge(message._msg);
+}
+
+void* consumer_close_worker(void* taskPtr) {
+  consumer_close_task& task = *(consumer_close_task*)taskPtr;
+  task.result = task.consumer.close();
+  return nullptr;
+}
+
+void Consumer::close() {
+  consumer_close_task task = { _consumer };
+  rb_thread_call_without_gvl(&consumer_close_task, &task, RUBY_UBF_IO, nullptr);
+  CheckResult(task.result);
 }
 
 }

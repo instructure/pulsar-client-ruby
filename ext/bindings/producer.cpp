@@ -34,6 +34,7 @@ void bind_producer(Module& module) {
   define_class_under<pulsar_rb::Producer>(module, "Producer")
     .define_constructor(Constructor<pulsar_rb::Producer>())
     .define_method("send", &pulsar_rb::Producer::send)
+    .define_method("close", &pulsar_rb::Producer::close)
     ;
 
   define_class_under<pulsar_rb::ProducerConfiguration>(module, "ProducerConfiguration")

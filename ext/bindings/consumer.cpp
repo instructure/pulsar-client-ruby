@@ -56,6 +56,7 @@ void bind_consumer(Module &module) {
     .define_method("receive", &pulsar_rb::Consumer::receive, (Arg("timeout_ms") = 0))
     .define_method("acknowledge", &pulsar_rb::Consumer::acknowledge)
     .define_method("negative_acknowledge", &pulsar_rb::Consumer::negative_acknowledge)
+    .define_method("close", &pulsar_rb::Consumer::close)
     ;
 
   define_enum<pulsar::ConsumerType>("ConsumerType", module)

@@ -17,6 +17,7 @@ namespace pulsar_rb {
     Message::ptr receive(unsigned int timeout_ms=0);
     void acknowledge(const Message& message);
     void negative_acknowledge(const Message& message);
+    void close();
 
     typedef Rice::Data_Object<Consumer> ptr;
   };

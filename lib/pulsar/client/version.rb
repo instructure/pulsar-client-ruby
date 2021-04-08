@@ -19,6 +19,6 @@
 
 module Pulsar
   class Client
-    VERSION = "2.6.1-beta.1"
+    VERSION = "2.6.1-beta.2"
   end
 end

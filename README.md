@@ -36,6 +36,7 @@ Setup and basic `consumer.receive` example:
 # export PULSAR_BROKER_URI=pulsar://your-pulsar-broker:6651
 # export PULSAR_CERT_PATH=/path/to/your/pulsar-ca.pem
 # export PULSAR_AUTH_TOKEN=your-auth-token
+# export PULSAR_AUTH_OAUTH2_PARAMS=your-oauth2-params
 
 # create client using values from environment
 client = Pulsar::Client.from_environment

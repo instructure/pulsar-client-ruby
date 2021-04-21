@@ -17,6 +17,7 @@ namespace pulsar_rb {
     ClientConfiguration();
 
     void setAuthFromToken(const std::string &token);
+    void setAuthFromOAuth2Params(const std::string &authParamsString);
     int getOperationTimeoutSeconds();
     void setOperationTimeoutSeconds(int timeout);
     int getIOThreads();

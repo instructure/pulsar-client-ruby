@@ -17,6 +17,10 @@ void ClientConfiguration::setAuthFromToken(const std::string &token) {
   _config.setAuth(pulsar::AuthToken::createWithToken(token));
 }
 
+void ClientConfiguration::setAuthFromOAuth2Params(const std::string &authParamsString) {
+  _config.setAuth(pulsar::AuthOauth2::create(authParamsString));
+}
+
 int ClientConfiguration::getOperationTimeoutSeconds() {
   return _config.getOperationTimeoutSeconds();
 }
@@ -201,6 +205,7 @@ void bind_client(Module& module) {
   define_class_under<pulsar_rb::ClientConfiguration>(module, "ClientConfiguration")
     .define_constructor(Constructor<pulsar_rb::ClientConfiguration>())
     .define_method("authentication_token=", &pulsar_rb::ClientConfiguration::setAuthFromToken)
+    .define_method("authentication_oauth2_params=", &pulsar_rb::ClientConfiguration::setAuthFromOAuth2Params)
     .define_method("operation_timeout_seconds", &pulsar_rb::ClientConfiguration::getOperationTimeoutSeconds)
     .define_method("operation_timeout_seconds=", &pulsar_rb::ClientConfiguration::setOperationTimeoutSeconds)
     .define_method("io_threads", &pulsar_rb::ClientConfiguration::getIOThreads)

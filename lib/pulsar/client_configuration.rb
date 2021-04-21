@@ -50,6 +50,9 @@ module Pulsar
       if environment.has_key?('PULSAR_CLIENT_CONF')
         environment_config.merge!(read_from_client_conf(environment['PULSAR_CLIENT_CONF']))
       end
+      if environment.has_key?('PULSAR_AUTH_OAUTH2_PARAMS')
+        environment_config[:authentication_oauth2_params] = environment['PULSAR_AUTH_OAUTH2_PARAMS']
+      end
       self.from(environment_config.merge(config))
     end
 
@@ -129,6 +132,7 @@ module Pulsar
 
     def populate(config={})
       populate_one(config, :authentication_token)
+      populate_one(config, :authentication_oauth2_params)
       populate_one(config, :operation_timeout_seconds)
       populate_one(config, :io_threads)
       populate_one(config, :message_listener_threads)

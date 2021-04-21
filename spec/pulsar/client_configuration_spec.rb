@@ -169,6 +169,14 @@ RSpec.describe Pulsar::ClientConfiguration do
     end
   end
 
+  it 'use OAuth2 params from environment' do
+    test_env = {
+      'PULSAR_AUTH_OAUTH2_PARAMS' => '{"issuer_url":"https://some.issuer.url","audience":"urn:some:audience","private_key":"/path/to/credentials/file.json"}'
+    }
+    config = Pulsar::ClientConfiguration.from_environment({}, test_env)
+    expect(config[:authentication_oauth2_params]).to eq('{"issuer_url":"https://some.issuer.url","audience":"urn:some:audience","private_key":"/path/to/credentials/file.json"}')
+  end
+
   describe "silent logging" do
     it "is off by default" do
       expect(Pulsar::ClientConfiguration.new.silent_logging?).to eq(false)
